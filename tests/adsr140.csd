@@ -11,7 +11,7 @@ ksmps=32
 nchnls=2
 0dbfs=1
 
-#include "../envelopes/adsr140.udo"
+#include "../udo/envelopes/adsr140.udo"
 
 instr 1
 ipch = cps2pch(p4,12)
