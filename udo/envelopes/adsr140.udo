@@ -4,20 +4,16 @@
 ; (http://www.earlevel.com/main/2013/06/03/envelope-generators-adsr-code/)
 ; Example by Steven Yi (2015.02.08)
 
-/* 
-;; Original version used UDO for coef; replaced with macro
+ 
 opcode adsr140_calc_coef, k, kk
   
   knum_samps, kratio xin
   xout exp( -log((1.0 + kratio) / kratio) / knum_samps)
     
 endop
-*/
 
 /* Gated, Re-triggerable ADSR modeled after the Doepfer A-140 */
 opcode adsr140, a, aakkkk
-
-#define adsr140_calc_coef(samps'ratio) #exp( -log((1.0 + $ratio) / $ratio) / $samps)#
 
 agate, aretrig, kattack, kdecay, ksustain, krelease xin
 
@@ -46,21 +42,21 @@ klast_release init -1
 if (klast_attack != kattack) then
   klast_attack = kattack
   kattack_samps = kattack * sr
-  kattack_coef = $adsr140_calc_coef(kattack_samps'0.3)
+  kattack_coef = adsr140_calc_coef(kattack_samps, 0.3)
   kattack_base = (1.0 + 0.3) * (1 - kattack_coef)
 endif
 
 if (klast_decay != kdecay) then
   klast_decay = kdecay
   kdecay_samps = kdecay * sr
-  kdecay_coef = $adsr140_calc_coef(kdecay_samps'0.0001)
+  kdecay_coef = adsr140_calc_coef(kdecay_samps, 0.0001)
   kdecay_base = (ksustain - 0.0001) * (1.0 - kdecay_coef)
 endif
 
 if (klast_release != krelease) then
   klast_release = krelease
   krelease_samps = krelease * sr
-  krelease_coef = $adsr140_calc_coef(krelease_samps'0.0001)
+  krelease_coef = adsr140_calc_coef(krelease_samps, 0.0001)
   krelease_base =  -0.0001 * (1.0 - krelease_coef)
 endif
 
